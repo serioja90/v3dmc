@@ -216,3 +216,49 @@ void addPoint(OBJECT* obj, POINT point){
 		}
 	}
 }
+
+/**
+ * @fn addLine(OBJECT* obj, LINE line)
+ * This function adds a new LINE to an object
+ * @param [out] obj the object to which to add the new LINE
+ * @param line the line to add to the object
+ */
+void addLine(OBJECT* obj, LINE line){
+	if(obj!=NULL){
+		GLint i;
+		LINE* _lines;
+		obj->nlines++;
+		_lines = obj->lines;
+		obj->lines = (LINE*)calloc(obj->nlines,sizeof(LINE));
+		for(i=0;i<obj->nlines-1;i++){
+			*(obj->lines + i) = *(_lines + i);
+		}
+		*(obj->lines + obj->nlines-1) = line;
+		if(_lines!=NULL){
+			free(_lines);
+		}
+	}
+}
+
+/**
+ * @fn addTriangle(OBJECT* obj, TRIANGLE triangle)
+ * This function add a new TIANGLE to the object.
+ * @param [out] obj the object to which to add the new TRIANGLE
+ * @param triangle the triangle to add to the object
+ */
+void addTriangle(OBJECT* obj, TRIANGLE triangle){
+	if(obj!=NULL){
+		GLint i;
+		TRIANGLE* _triangles;
+		obj->ntriangles++;
+		_triangles = obj->triangles;
+		obj->triangles = (TRIANGLE*)calloc(obj->ntriangles,sizeof(TRIANGLE));
+		for(i=0;i<obj->ntriangles-1;i++){
+			*(obj->triangles + i) = *(_triangles + i);
+		}
+		*(obj->triangles + obj->ntriangles - 1) = triangle;
+		if(_triangles!=NULL){
+			free(_triangles);
+		}
+	}
+}
