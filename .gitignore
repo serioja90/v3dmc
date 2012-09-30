@@ -2,3 +2,4 @@ main.c
 doc
 doc/
 *.o
+*.so

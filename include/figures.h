@@ -26,13 +26,13 @@
  */
 typedef struct{
 	/** The red component's value of the color. Should have values between 0.0-1.0. */
-	GLfloat r;
+	GLclampf r;
 	/** The green component's value of the color. Should have values between 0.0-1.0. */
-	GLfloat g;
+	GLclampf g;
 	/** The blue component's value of the color. Should have values between 0.0-1.0. */
-	GLfloat b;
+	GLclampf b;
 	/** The alfa component's value of the color. Should have values between 0.0-1.0. */
-	GLfloat a;
+	GLclampf a;
 }COLOR;
 
 /**
@@ -181,7 +181,7 @@ COLOR RGBi(GLint r, GLint g, GLint b);
  * @param b the green component's value
  * @return a COLOR object
  */
-COLOR RGBf(GLfloat r, GLfloat g, GLfloat b);
+COLOR RGBf(GLclampf r, GLclampf g, GLclampf b);
 
 /**
  * @gn RGBAi(GLint r, GLint g, GLint b, GLint a)
@@ -203,7 +203,7 @@ COLOR RGBAi(GLint r, GLint g, GLint b, GLint a);
  * @param a the green component's value
  * @return a COLOR object
  */
-COLOR RGBAf(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
+COLOR RGBAf(GLclampf r, GLclampf g, GLclampf b, GLclampf a);
 
 /**
  * @fn point(GLfloat x, GLfloat y, GLfloat z, COLOR color)
@@ -285,3 +285,34 @@ void addTriangle(OBJECT* obj, TRIANGLE triangle);
  * @param quad the quad to add to the object
  */
 void addQuad(OBJECT* obj, QUAD quad);
+
+/**
+ * @fn clampf(GLfloat value)
+ * This function check if the passed value is between 0.0 and 1.0 and if not
+ * returns a float value in this interval. If the value is greater than 1.0, than
+ * the function returns 1.0 and if the passed value is smaller than 0.0, returns 0.0.
+ * @param value the value to normalize
+ * @return a GLclampf value between 0.0 and 1.0
+ */
+ GLclampf clampf(GLfloat value);
+
+/**
+ * @fn texcoord(GLclampf a, GLclampf b)
+ * This function create a TEXCOORD object;
+ * @param x the x texture coordinate
+ * @param y the y texture coordinate
+ * @return a TEXCOORD object
+ */
+TEXCOORD texcoord(GLclampf x, GLclampf y);
+
+/**
+ * @fn texture(GLchar* name, TEXCOORD a, TEXCOORD b, TEXCOORD c, TEXCOORD d)
+ * This function create a new TEXTURE object.
+ * @param name the path and name of the texture
+ * @param a the upper-left corner's coordinates
+ * @param b the upper-right corner's coordinates
+ * @param c the lower-right corner's coordinates
+ * @param d the lower-left corner's coordinates
+ * @return a TEXTURE coordinates
+ */
+TEXTURE texture(GLchar* name, TEXCOORD a, TEXCOORD b, TEXCOORD c, TEXCOORD d);
