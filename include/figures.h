@@ -1,6 +1,4 @@
 /**
- * Copyright Groza Sergiu.
- *
  * This file contains the structure definitions of the primitives
  * that will be used as the basic tools for models designing.
  */
