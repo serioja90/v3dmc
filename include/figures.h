@@ -55,6 +55,20 @@ typedef struct{
 }POINT;
 
 /**
+ * @struct _PointListElement
+ * The structure that defines the element of an point list.
+ */
+typedef struct _PointListElement{
+	/** The point */
+	POINT point;
+	/** Pointer to the next element of the list */
+	struct _PointListElement* next;
+	/** Pointer to the previous element of the list */
+	struct _PointListElement* prev;
+}PointListElement;
+typedef PointListElement* POINTLIST;
+
+/**
  * @struct LINE
  * This structure allows to store a line information. We need 2 POINT attributes
  * to define a line. The color information is stored in the POINT structure, so we
@@ -99,7 +113,7 @@ typedef struct{
 	/** Lower-left corner coordinates. */
 	TEXCOORD d;
 	/** The texture's name. */
-	GLchar* name[255];
+	GLchar name[255];
 }TEXTURE;
 
 /**
@@ -153,8 +167,10 @@ typedef struct{
 	GLint ntriangles;
 	/** The number of quads in the object */
 	GLint nquads;
-	/** The pointer to the vector of points */
-	POINT* points;
+	/** The pointer to the list of points */
+	POINTLIST points;
+	/** The last point in the list of points */
+	POINTLIST last_point;
 	/** The pointer to the vector of lines */
 	LINE* lines;
 	/** The pointer to the vector of triangles */
@@ -263,6 +279,16 @@ OBJECT object();
 void addPoint(OBJECT* obj, POINT point);
 
 /**
+ * @fn getPointListElement(OBJECT obj,GLint index)
+ * This function allows to get an object's point by the index of the element
+ * inside the list of points.
+ * @param the object from which to get the point
+ * @param index the index of the element in the list to get
+ * @return a POINT that belongs to the object 
+ */
+POINTLIST getPointListElement(OBJECT obj,GLint index);
+
+/**
  * @fn addLine(OBJECT* obj, LINE line)
  * This function adds a new LINE to an object
  * @param [out] obj the object to which to add the new LINE
@@ -316,3 +342,11 @@ TEXCOORD texcoord(GLclampf x, GLclampf y);
  * @return a TEXTURE coordinates
  */
 TEXTURE texture(GLchar* name, TEXCOORD a, TEXCOORD b, TEXCOORD c, TEXCOORD d);
+
+/**
+ * @fn saveObject(OBJECT obj, GLchar *filename)
+ * This function allows to save an OBJECT to a binary file.
+ * @param obj the object to save to a file
+ * @param filename the name of the file to whici to save the object
+ */
+void saveObject(OBJECT obj, GLchar *filename);

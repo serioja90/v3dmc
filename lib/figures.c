@@ -1,33 +1,10 @@
-/**
- * @file figures.c
- * This file is used for the 'libfigures.so' dynamic library creation
- * and contains the definitions of the methods that allows to initialize
- * and create new instances of the structures declared inside the 
- * 'include/figures.h' header.
- * @author Groza Sergiu
- * @version 0.1.0
- * @brief The file that contains the definitions of the functions declared in 'figures.h'.
- */
-
-/**
- * @include "figures.h"
- * @include <GL/gl.h>
- * @include <stdio.h>
- * @include <stdlib.h>
- */
  #include "figures.h"
  #include <GL/gl.h>
  #include <stdio.h>
  #include <stdlib.h>
+ #include <string.h>
 
-/**
- * @fn clampf(GLfloat value)
- * This function check if the passed value is between 0.0 and 1.0 and if not
- * returns a float value in this interval. If the value is greater than 1.0, than
- * the function returns 1.0 and if the passed value is smaller than 0.0, returns 0.0.
- * @param value the value to normalize
- * @return a GLclampf value between 0.0 and 1.0
- */
+/***********************************************************/
 GLclampf clampf(GLfloat value){
 	if(value>1.0){
 		return 1.0;
@@ -37,14 +14,7 @@ GLclampf clampf(GLfloat value){
 	return value;
 }
 
-/**
- * @fn RGBi(GLint r, GLint g, GLint b)
- * This function create a COLOR object from 3 integers.
- * @param r the red component's value
- * @param g the green component's value
- * @param b the green component's value
- * @return a COLOR object
- */
+/***********************************************************/
 COLOR RGBi(GLint r, GLint g, GLint b){
 	COLOR color;
 	color.r = clampf((float)r/255.0);
@@ -54,14 +24,7 @@ COLOR RGBi(GLint r, GLint g, GLint b){
 	return color;
 } 
 
-/**
- * @fn RGBf(GLfloat r, GLfloat g, GLfloat b)
- * This function create a COLOR object by 3 float.
- * @param r the red component's value
- * @param g the green component's value
- * @param b the green component's value
- * @return a COLOR object
- */
+/***********************************************************/
 COLOR RGBf(GLclampf r, GLclampf g, GLclampf b){
 	COLOR color;
 	color.r = clampf(r);
@@ -71,15 +34,7 @@ COLOR RGBf(GLclampf r, GLclampf g, GLclampf b){
 	return color;
 }
 
-/**
- * @gn RGBAi(GLint r, GLint g, GLint b, GLint a)
- * This function a COLOR object by 4 integers.
- * @param r the red component's value
- * @param g the green component's value
- * @param b the green component's value
- * @param a the green component's value
- * @return a COLOR object
- */
+/***********************************************************/
 COLOR RGBAi(GLint r, GLint g, GLint b, GLint a){
 	COLOR color;
 	color.r = clampf((float)r/255.0);
@@ -89,15 +44,7 @@ COLOR RGBAi(GLint r, GLint g, GLint b, GLint a){
 	return color;
 }
 
-/**
- * @gn RGBAf(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
- * This function a COLOR object by 4 float.
- * @param r the red component's value
- * @param g the green component's value
- * @param b the green component's value
- * @param a the green component's value
- * @return a COLOR object
- */
+/***********************************************************/
 COLOR RGBAf(GLclampf r, GLclampf g, GLclampf b, GLclampf a){
 	COLOR color;
 	color.r = clampf(r);
@@ -107,14 +54,7 @@ COLOR RGBAf(GLclampf r, GLclampf g, GLclampf b, GLclampf a){
 	return color;
 }
 
-/**
- * @fn point(GLfloat x, GLfloat y, GLfloat z, COLOR color)
- * This function create a POINT object.
- * @param x a float that represents the x coordinate of the point
- * @param y a float that represents the y coordinate of the point
- * @param z a float that represents the z coordinate of the point
- * @return a POINT object
- */
+/***********************************************************/
 POINT point(GLfloat x, GLfloat y, GLfloat z, COLOR color){
 	POINT point;
 	point.x = x;
@@ -124,13 +64,7 @@ POINT point(GLfloat x, GLfloat y, GLfloat z, COLOR color){
 	return point;
 }
 
-/**
- * @fn line(POINT a, POINT b)
- * This function create a LINE object.
- * @param a the start point of the line
- * @param b the end point of the line
- * @return a POINT object
- */
+/***********************************************************/
 LINE line(POINT a, POINT b){
 	LINE line;
 	line.a = a;
@@ -138,15 +72,7 @@ LINE line(POINT a, POINT b){
 	return line;
 }
 
-/**
- * @fn triangle(POINT a, POINT b, POINT c, TEXTURE texture)
- * This function create a TRIANGLE object.
- * @param a the first vertex
- * @param b the second vertex
- * @param c the third vertex
- * @param texture the texture to map on the triangle
- * @return a TRIANGLE object
- */
+/***********************************************************/
 TRIANGLE triangle(POINT a, POINT b, POINT c, TEXTURE texture){
 	TRIANGLE triangle;
 	triangle.a = a;
@@ -156,16 +82,7 @@ TRIANGLE triangle(POINT a, POINT b, POINT c, TEXTURE texture){
 	return triangle;
 }
 
-/**
- * @fn quad(POINT a, POINT b, POINT c, POINT d, TEXTURE texture)
- * This function create a QUAD object.
- * @param a the first vertex
- * @param b the second vertex
- * @param c the third vertex
- * @param d the fourth vertex
- * @param texture the texture to map on the quad
- * @return a QUAD object
- */
+/***********************************************************/
 QUAD quad(POINT a, POINT b, POINT c, POINT d, TEXTURE texture){
 	QUAD quad;
 	quad.a = a;
@@ -176,11 +93,7 @@ QUAD quad(POINT a, POINT b, POINT c, POINT d, TEXTURE texture){
 	return quad;
 }
 
-/**
- * @fn object()
- * This function create an empty initialized OBJECT.
- * @return a OBJECT
- */
+/***********************************************************/
 OBJECT object(){
 	OBJECT object;
 	object.npoints = 0;
@@ -188,41 +101,62 @@ OBJECT object(){
 	object.ntriangles = 0;
 	object.nquads = 0;
 	object.points = NULL;
+	object.last_point = NULL;
 	object.lines = NULL;
 	object.triangles = NULL;
 	object.quads = NULL;
 	return object;
 }
 
-/**
- * @fn addPoint(OBJECT* obj, POINT point)
- * This funtion adds a new POINT to an object.
- * @param [out] obj the object to which to add the new POINT
- * @param point the point to add to the object
- */
+/***********************************************************/
 void addPoint(OBJECT* obj, POINT point){
 	if(obj!=NULL){
-		GLint i;
-		POINT* _points;
 		obj->npoints++;
-		_points = obj->points;
-		obj->points = (POINT*)calloc(obj->npoints,sizeof(POINT));
-		for(i=0;i<obj->npoints-1;i++){
-			*(obj->points + i) = *(_points + i); 
-		}
-		*(obj->points + obj->npoints-1) = point;
-		if(_points!=NULL){
-			free(_points);
+		if(obj->points==NULL){
+			obj->points = (POINTLIST)malloc(sizeof(PointListElement));
+			obj->points->point = point;
+			obj->points->prev = NULL;
+			obj->points->next = NULL;
+			obj->last_point = obj->points;
+		}else{
+			obj->last_point->next = (POINTLIST)malloc(sizeof(PointListElement));
+			obj->last_point->next->prev = obj->last_point;
+			obj->last_point = obj->last_point->next;
+			obj->last_point->point = point;
+			obj->last_point->next = NULL; 
 		}
 	}
 }
 
-/**
- * @fn addLine(OBJECT* obj, LINE line)
- * This function adds a new LINE to an object
- * @param [out] obj the object to which to add the new LINE
- * @param line the line to add to the object
- */
+/***********************************************************/
+POINTLIST getPointListElement(OBJECT obj,GLint index){
+	GLint i;
+	if(index < 0 || index>obj.npoints){
+		return NULL;
+	}
+	// split the search in 2 parts
+	if(index<=obj.npoints/2){
+		// if the searched element is in the lower part of list
+		POINTLIST list = obj.points;
+		i = 0;
+		while(list!=NULL && i!=index){
+			list = list->next;
+			i++;
+		}
+		return list;
+	}else{
+		// if the searched element is in the upper part of list
+		POINTLIST list = obj.last_point;
+		i=obj.npoints-1;
+		while(list!=NULL && i!=index){
+			list = list->prev;
+			i--;
+		}
+		return list;
+	}
+}
+
+/***********************************************************/
 void addLine(OBJECT* obj, LINE line){
 	if(obj!=NULL){
 		GLint i;
@@ -240,12 +174,7 @@ void addLine(OBJECT* obj, LINE line){
 	}
 }
 
-/**
- * @fn addTriangle(OBJECT* obj, TRIANGLE triangle)
- * This function add a new TIANGLE to the object.
- * @param [out] obj the object to which to add the new TRIANGLE
- * @param triangle the triangle to add to the object
- */
+/***********************************************************/
 void addTriangle(OBJECT* obj, TRIANGLE triangle){
 	if(obj!=NULL){
 		GLint i;
@@ -259,6 +188,74 @@ void addTriangle(OBJECT* obj, TRIANGLE triangle){
 		*(obj->triangles + obj->ntriangles - 1) = triangle;
 		if(_triangles!=NULL){
 			free(_triangles);
+		}
+	}
+}
+
+/***********************************************************/
+void addQuad(OBJECT* obj, QUAD quad){
+	if(obj!=NULL){
+		GLint i;
+		QUAD* _quads;
+		obj->nquads++;
+		_quads = obj->quads;
+		obj->quads = (QUAD*)calloc(obj->nquads,sizeof(QUAD));
+		for(i=0;i<obj->nquads-1;i++){
+			*(obj->quads + i) = *(_quads + i);
+		}
+		*(obj->quads + obj->nquads - 1) = quad;
+		if(_quads!=NULL){
+			free(_quads);
+		}
+	}
+}
+
+/***********************************************************/
+TEXCOORD texcoord(GLclampf x, GLclampf y){
+	TEXCOORD texcoord;
+	texcoord.x = clampf(x);
+	texcoord.y = clampf(y);
+	return texcoord;
+}
+
+/***********************************************************/
+TEXTURE texture(GLchar* name, TEXCOORD a, TEXCOORD b, TEXCOORD c, TEXCOORD d){
+	TEXTURE texture;
+	texture.name[0] = '\0';
+	if(name!=NULL){
+		strcpy(texture.name,name);
+	}
+	texture.a = a;
+	texture.b = b;
+	texture.c = c;
+	texture.d = d;
+	return texture;
+}
+
+/***********************************************************/
+void saveObject(OBJECT obj, GLchar *filename){
+	FILE* file;
+	GLint i;
+	POINTLIST points;
+	file = fopen(filename,"w");
+	if(file!=NULL){
+		fwrite(&(obj.npoints),sizeof(int),1,file);
+		fwrite(&(obj.nlines),sizeof(int),1,file);
+		fwrite(&(obj.ntriangles),sizeof(int),1,file);
+		fwrite(&(obj.nquads),sizeof(int),1,file);
+		points = obj.points;
+		for(i=0;i<obj.npoints;i++){
+			fwrite(&(points->point),sizeof(POINT),1,file);
+			points = points->next;
+		}
+		for(i=0;i<obj.nlines;i++){
+			fwrite((obj.lines+i),sizeof(LINE),1,file);
+		}
+		for(i=0;i<obj.ntriangles;i++){
+			fwrite((obj.triangles+i),sizeof(TRIANGLE),1,file);
+		}
+		for(i=0;i<obj.nquads;i++){
+			fwrite((obj.quads+i),sizeof(QUAD),1,file);
 		}
 	}
 }
