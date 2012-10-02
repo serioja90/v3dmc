@@ -55,17 +55,21 @@ typedef struct{
 }POINT;
 
 /**
- * @struct _PointListElement
+ * @struct PointListElement
  * The structure that defines the element of an point list.
  */
-typedef struct _PointListElement{
+typedef struct PointListElement{
 	/** The point */
 	POINT point;
 	/** Pointer to the next element of the list */
-	struct _PointListElement* next;
+	struct PointListElement* next;
 	/** Pointer to the previous element of the list */
-	struct _PointListElement* prev;
+	struct PointListElement* prev;
 }PointListElement;
+
+/**
+ * @struct POINTLIST
+ */
 typedef PointListElement* POINTLIST;
 
 /**
@@ -82,6 +86,23 @@ typedef struct{
 	/** The line end point */
 	POINT b;
 }LINE;
+
+/**
+ * @struct LineListElement
+ */
+typedef struct LineListElement{
+	/** The line contained in this element of the list */
+	LINE line;
+	/** The pointer to the next element */
+	struct LineListElement* next;
+	/** The pointer to the previous element */
+	struct LineListElement* prev;
+}LineListElement;
+
+/**
+ * @struct LINELIST
+ */
+typedef LineListElement* LINELIST;
 
 /**
  * @struct TEXCOORD
@@ -171,8 +192,10 @@ typedef struct{
 	POINTLIST points;
 	/** The last point in the list of points */
 	POINTLIST last_point;
-	/** The pointer to the vector of lines */
-	LINE* lines;
+	/** The pointer to the list of lines */
+	LINELIST lines;
+	/** The last line of the list of lines */
+	LINELIST last_line;
 	/** The pointer to the vector of triangles */
 	TRIANGLE* triangles;
 	/** The pointer to the vector of quads */
@@ -282,11 +305,21 @@ void addPoint(OBJECT* obj, POINT point);
  * @fn getPointListElement(OBJECT obj,GLint index)
  * This function allows to get an object's point by the index of the element
  * inside the list of points.
- * @param the object from which to get the point
+ * @param obj the object from which to get the point
  * @param index the index of the element in the list to get
- * @return a POINT that belongs to the object 
+ * @return a POINTLIST in the position indicated by index or NULL if the element wasn't found
  */
-POINTLIST getPointListElement(OBJECT obj,GLint index);
+POINTLIST getPointListElement(OBJECT obj, GLint index);
+
+/**
+ * @fn LINELIST getLineListElement(OBJECT obj, GLint index)
+ * This function allows to get an object's line by specifying the index of the element 
+ * to return.
+ * @param obj the object in which to search the LineListElement
+ * @param index the index of the element in the lines list
+ * @return a LINELIST in the position indicated by index or NULL if the element wasn't fount
+ */
+LINELIST getLineListElement(OBJECT obj, GLint index);
 
 /**
  * @fn addLine(OBJECT* obj, LINE line)

@@ -103,6 +103,7 @@ OBJECT object(){
 	object.points = NULL;
 	object.last_point = NULL;
 	object.lines = NULL;
+	object.last_line = NULL;
 	object.triangles = NULL;
 	object.quads = NULL;
 	return object;
@@ -159,18 +160,48 @@ POINTLIST getPointListElement(OBJECT obj,GLint index){
 /***********************************************************/
 void addLine(OBJECT* obj, LINE line){
 	if(obj!=NULL){
-		GLint i;
-		LINE* _lines;
 		obj->nlines++;
-		_lines = obj->lines;
-		obj->lines = (LINE*)calloc(obj->nlines,sizeof(LINE));
-		for(i=0;i<obj->nlines-1;i++){
-			*(obj->lines + i) = *(_lines + i);
+		if(obj->lines==NULL){
+			obj->lines = (LINELIST)malloc(sizeof(LineListElement));
+			obj->lines->line = line;
+			obj->lines->prev = NULL;
+			obj->lines->next = NULL;
+			obj->last_line = obj->lines;
+		}else{
+			obj->last_line->next = (LINELIST)malloc(sizeof(LineListElement));
+			obj->last_line->next->prev = obj->last_line;
+			obj->last_line = obj->last_line->next;
+			obj->last_line->line = line;
+			obj->last_line->next = NULL; 
 		}
-		*(obj->lines + obj->nlines-1) = line;
-		if(_lines!=NULL){
-			free(_lines);
+	}
+}
+
+/***********************************************************/
+LINELIST getLineListElement(OBJECT obj, GLint index){
+	GLint i;
+	if(index < 0 || index>obj.nlines){
+		return NULL;
+	}
+	// split the search in 2 parts
+	if(index<=obj.nlines/2){
+		// if the searched element is in the lower part of list
+		LINELIST list = obj.lines;
+		i = 0;
+		while(list!=NULL && i!=index){
+			list = list->next;
+			i++;
 		}
+		return list;
+	}else{
+		// if the searched element is in the upper part of list
+		LINELIST list = obj.last_line;
+		i=obj.nlines-1;
+		while(list!=NULL && i!=index){
+			list = list->prev;
+			i--;
+		}
+		return list;
 	}
 }
 
@@ -237,6 +268,7 @@ void saveObject(OBJECT obj, GLchar *filename){
 	FILE* file;
 	GLint i;
 	POINTLIST points;
+	LINELIST lines;
 	file = fopen(filename,"w");
 	if(file!=NULL){
 		fwrite(&(obj.npoints),sizeof(int),1,file);
@@ -244,12 +276,14 @@ void saveObject(OBJECT obj, GLchar *filename){
 		fwrite(&(obj.ntriangles),sizeof(int),1,file);
 		fwrite(&(obj.nquads),sizeof(int),1,file);
 		points = obj.points;
+		lines = obj.lines;
 		for(i=0;i<obj.npoints;i++){
 			fwrite(&(points->point),sizeof(POINT),1,file);
 			points = points->next;
 		}
 		for(i=0;i<obj.nlines;i++){
-			fwrite((obj.lines+i),sizeof(LINE),1,file);
+			fwrite(&(lines->line),sizeof(LINE),1,file);
+			lines = lines->next;
 		}
 		for(i=0;i<obj.ntriangles;i++){
 			fwrite((obj.triangles+i),sizeof(TRIANGLE),1,file);
@@ -257,5 +291,6 @@ void saveObject(OBJECT obj, GLchar *filename){
 		for(i=0;i<obj.nquads;i++){
 			fwrite((obj.quads+i),sizeof(QUAD),1,file);
 		}
+		fclose(file);
 	}
 }
