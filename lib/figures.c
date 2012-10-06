@@ -15,28 +15,28 @@ GLclampf clampf(GLfloat value){
 }
 
 /***********************************************************/
-COLOR RGBi(GLint r, GLint g, GLint b){
-	COLOR color;
+v3dmc_color rgbi(GLint r, GLint g, GLint b){
+	v3dmc_color color;
 	color.r = clampf((float)r/255.0);
 	color.g = clampf((float)g/255.0);
 	color.b = clampf((float)b/255.0);
-	color.a = 0.0;
+	color.a = 1.0;
 	return color;
 } 
 
 /***********************************************************/
-COLOR RGBf(GLclampf r, GLclampf g, GLclampf b){
-	COLOR color;
+v3dmc_color rgbf(GLclampf r, GLclampf g, GLclampf b){
+	v3dmc_color color;
 	color.r = clampf(r);
 	color.g = clampf(g);
 	color.b = clampf(b);
-	color.a = 0.0;
+	color.a = 1.0;
 	return color;
 }
 
 /***********************************************************/
-COLOR RGBAi(GLint r, GLint g, GLint b, GLint a){
-	COLOR color;
+v3dmc_color rgbai(GLint r, GLint g, GLint b, GLint a){
+	v3dmc_color color;
 	color.r = clampf((float)r/255.0);
 	color.g = clampf((float)g/255.0);
 	color.b = clampf((float)b/255.0);
@@ -45,8 +45,8 @@ COLOR RGBAi(GLint r, GLint g, GLint b, GLint a){
 }
 
 /***********************************************************/
-COLOR RGBAf(GLclampf r, GLclampf g, GLclampf b, GLclampf a){
-	COLOR color;
+v3dmc_color rgbaf(GLclampf r, GLclampf g, GLclampf b, GLclampf a){
+	v3dmc_color color;
 	color.r = clampf(r);
 	color.g = clampf(g);
 	color.b = clampf(b);
@@ -55,8 +55,8 @@ COLOR RGBAf(GLclampf r, GLclampf g, GLclampf b, GLclampf a){
 }
 
 /***********************************************************/
-POINT point(GLfloat x, GLfloat y, GLfloat z, COLOR color){
-	POINT point;
+v3dmc_point point(GLfloat x, GLfloat y, GLfloat z, v3dmc_color color){
+	v3dmc_point point;
 	point.x = x;
 	point.y = y;
 	point.z = z;
@@ -65,16 +65,16 @@ POINT point(GLfloat x, GLfloat y, GLfloat z, COLOR color){
 }
 
 /***********************************************************/
-LINE line(POINT a, POINT b){
-	LINE line;
+v3dmc_line line(v3dmc_point a, v3dmc_point b){
+	v3dmc_line line;
 	line.a = a;
 	line.b = b;
 	return line;
 }
 
 /***********************************************************/
-TRIANGLE triangle(POINT a, POINT b, POINT c, TEXTURE texture){
-	TRIANGLE triangle;
+v3dmc_triangle triangle(v3dmc_point a, v3dmc_point b, v3dmc_point c, v3dmc_texture texture){
+	v3dmc_triangle triangle;
 	triangle.a = a;
 	triangle.b = b;
 	triangle.c = c;
@@ -83,8 +83,8 @@ TRIANGLE triangle(POINT a, POINT b, POINT c, TEXTURE texture){
 }
 
 /***********************************************************/
-QUAD quad(POINT a, POINT b, POINT c, POINT d, TEXTURE texture){
-	QUAD quad;
+v3dmc_quad quad(v3dmc_point a, v3dmc_point b, v3dmc_point c, v3dmc_point d, v3dmc_texture texture){
+	v3dmc_quad quad;
 	quad.a = a;
 	quad.b = b;
 	quad.c = c;
@@ -94,8 +94,8 @@ QUAD quad(POINT a, POINT b, POINT c, POINT d, TEXTURE texture){
 }
 
 /***********************************************************/
-OBJECT object(){
-	OBJECT object;
+v3dmc_object object(){
+	v3dmc_object object;
 	object.npoints = 0;
 	object.nlines = 0;
 	object.ntriangles = 0;
@@ -106,21 +106,22 @@ OBJECT object(){
 	object.last_line = NULL;
 	object.triangles = NULL;
 	object.quads = NULL;
+	object.last_quad = NULL;
 	return object;
 }
 
 /***********************************************************/
-void addPoint(OBJECT* obj, POINT point){
+void add_point(v3dmc_object* obj, v3dmc_point point){
 	if(obj!=NULL){
 		obj->npoints++;
 		if(obj->points==NULL){
-			obj->points = (POINTLIST)malloc(sizeof(PointListElement));
+			obj->points = (v3dmc_point_list)malloc(sizeof(v3dmc_point_list_element));
 			obj->points->point = point;
 			obj->points->prev = NULL;
 			obj->points->next = NULL;
 			obj->last_point = obj->points;
 		}else{
-			obj->last_point->next = (POINTLIST)malloc(sizeof(PointListElement));
+			obj->last_point->next = (v3dmc_point_list)malloc(sizeof(v3dmc_point_list_element));
 			obj->last_point->next->prev = obj->last_point;
 			obj->last_point = obj->last_point->next;
 			obj->last_point->point = point;
@@ -130,7 +131,7 @@ void addPoint(OBJECT* obj, POINT point){
 }
 
 /***********************************************************/
-POINTLIST getPointListElement(OBJECT obj,GLint index){
+v3dmc_point_list get_point_list_element(v3dmc_object obj,GLint index){
 	GLint i;
 	if(index < 0 || index>obj.npoints){
 		return NULL;
@@ -138,7 +139,7 @@ POINTLIST getPointListElement(OBJECT obj,GLint index){
 	// split the search in 2 parts
 	if(index<=obj.npoints/2){
 		// if the searched element is in the lower part of list
-		POINTLIST list = obj.points;
+		v3dmc_point_list list = obj.points;
 		i = 0;
 		while(list!=NULL && i!=index){
 			list = list->next;
@@ -147,7 +148,7 @@ POINTLIST getPointListElement(OBJECT obj,GLint index){
 		return list;
 	}else{
 		// if the searched element is in the upper part of list
-		POINTLIST list = obj.last_point;
+		v3dmc_point_list list = obj.last_point;
 		i=obj.npoints-1;
 		while(list!=NULL && i!=index){
 			list = list->prev;
@@ -158,17 +159,17 @@ POINTLIST getPointListElement(OBJECT obj,GLint index){
 }
 
 /***********************************************************/
-void addLine(OBJECT* obj, LINE line){
+void add_line(v3dmc_object* obj, v3dmc_line line){
 	if(obj!=NULL){
 		obj->nlines++;
 		if(obj->lines==NULL){
-			obj->lines = (LINELIST)malloc(sizeof(LineListElement));
+			obj->lines = (v3dmc_line_list)malloc(sizeof(v3dmc_line_list_element));
 			obj->lines->line = line;
 			obj->lines->prev = NULL;
 			obj->lines->next = NULL;
 			obj->last_line = obj->lines;
 		}else{
-			obj->last_line->next = (LINELIST)malloc(sizeof(LineListElement));
+			obj->last_line->next = (v3dmc_line_list)malloc(sizeof(v3dmc_line_list_element));
 			obj->last_line->next->prev = obj->last_line;
 			obj->last_line = obj->last_line->next;
 			obj->last_line->line = line;
@@ -178,7 +179,7 @@ void addLine(OBJECT* obj, LINE line){
 }
 
 /***********************************************************/
-LINELIST getLineListElement(OBJECT obj, GLint index){
+v3dmc_line_list get_line_list_element(v3dmc_object obj, GLint index){
 	GLint i;
 	if(index < 0 || index>obj.nlines){
 		return NULL;
@@ -186,7 +187,7 @@ LINELIST getLineListElement(OBJECT obj, GLint index){
 	// split the search in 2 parts
 	if(index<=obj.nlines/2){
 		// if the searched element is in the lower part of list
-		LINELIST list = obj.lines;
+		v3dmc_line_list list = obj.lines;
 		i = 0;
 		while(list!=NULL && i!=index){
 			list = list->next;
@@ -195,7 +196,7 @@ LINELIST getLineListElement(OBJECT obj, GLint index){
 		return list;
 	}else{
 		// if the searched element is in the upper part of list
-		LINELIST list = obj.last_line;
+		v3dmc_line_list list = obj.last_line;
 		i=obj.nlines-1;
 		while(list!=NULL && i!=index){
 			list = list->prev;
@@ -206,52 +207,112 @@ LINELIST getLineListElement(OBJECT obj, GLint index){
 }
 
 /***********************************************************/
-void addTriangle(OBJECT* obj, TRIANGLE triangle){
+void add_triangle(v3dmc_object* obj, v3dmc_triangle triangle){
 	if(obj!=NULL){
-		GLint i;
-		TRIANGLE* _triangles;
 		obj->ntriangles++;
-		_triangles = obj->triangles;
-		obj->triangles = (TRIANGLE*)calloc(obj->ntriangles,sizeof(TRIANGLE));
-		for(i=0;i<obj->ntriangles-1;i++){
-			*(obj->triangles + i) = *(_triangles + i);
-		}
-		*(obj->triangles + obj->ntriangles - 1) = triangle;
-		if(_triangles!=NULL){
-			free(_triangles);
+		if(obj->triangles==NULL){
+			obj->triangles = (v3dmc_triangle_list)malloc(sizeof(v3dmc_triangle_list_element));
+			obj->triangles->triangle = triangle;
+			obj->triangles->prev = NULL;
+			obj->triangles->next = NULL;
+			obj->last_triangle = obj->triangles;
+		}else{
+			obj->last_triangle->next = (v3dmc_triangle_list)malloc(sizeof(v3dmc_triangle_list_element));
+			obj->last_triangle->next->prev = obj->last_triangle;
+			obj->last_triangle = obj->last_triangle->next;
+			obj->last_triangle->triangle = triangle;
+			obj->last_triangle->next = NULL; 
 		}
 	}
 }
 
 /***********************************************************/
-void addQuad(OBJECT* obj, QUAD quad){
+v3dmc_triangle_list get_triangle_list_element(v3dmc_object obj, GLint index){
+	GLint i;
+	if(index < 0 || index>obj.ntriangles){
+		return NULL;
+	}
+	// split the search in 2 parts
+	if(index<=obj.ntriangles/2){
+		// if the searched element is in the lower part of list
+		v3dmc_triangle_list list = obj.triangles;
+		i = 0;
+		while(list!=NULL && i!=index){
+			list = list->next;
+			i++;
+		}
+		return list;
+	}else{
+		// if the searched element is in the upper part of list
+		v3dmc_triangle_list list = obj.last_triangle;
+		i=obj.ntriangles-1;
+		while(list!=NULL && i!=index){
+			list = list->prev;
+			i--;
+		}
+		return list;
+	}
+}
+
+/***********************************************************/
+void add_quad(v3dmc_object* obj, v3dmc_quad quad){
 	if(obj!=NULL){
-		GLint i;
-		QUAD* _quads;
 		obj->nquads++;
-		_quads = obj->quads;
-		obj->quads = (QUAD*)calloc(obj->nquads,sizeof(QUAD));
-		for(i=0;i<obj->nquads-1;i++){
-			*(obj->quads + i) = *(_quads + i);
-		}
-		*(obj->quads + obj->nquads - 1) = quad;
-		if(_quads!=NULL){
-			free(_quads);
+		if(obj->quads==NULL){
+			obj->quads = (v3dmc_quad_list)malloc(sizeof(v3dmc_quad_list_element));
+			obj->quads->quad = quad;
+			obj->quads->prev = NULL;
+			obj->quads->next = NULL;
+			obj->last_quad = obj->quads;
+		}else{
+			obj->last_quad->next = (v3dmc_quad_list)malloc(sizeof(v3dmc_quad_list_element));
+			obj->last_quad->next->prev = obj->last_quad;
+			obj->last_quad = obj->last_quad->next;
+			obj->last_quad->quad = quad;
+			obj->last_quad->next = NULL; 
 		}
 	}
 }
 
 /***********************************************************/
-TEXCOORD texcoord(GLclampf x, GLclampf y){
-	TEXCOORD texcoord;
+v3dmc_quad_list get_quad_list_element(v3dmc_object obj, GLint index){
+	GLint i;
+	if(index < 0 || index>obj.nquads){
+		return NULL;
+	}
+	// split the search in 2 parts
+	if(index<=obj.nquads/2){
+		// if the searched element is in the lower part of list
+		v3dmc_quad_list list = obj.quads;
+		i = 0;
+		while(list!=NULL && i!=index){
+			list = list->next;
+			i++;
+		}
+		return list;
+	}else{
+		// if the searched element is in the upper part of list
+		v3dmc_quad_list list = obj.last_quad;
+		i=obj.nquads-1;
+		while(list!=NULL && i!=index){
+			list = list->prev;
+			i--;
+		}
+		return list;
+	}
+}
+
+/***********************************************************/
+v3dmc_texcoord texcoord(GLclampf x, GLclampf y){
+	v3dmc_texcoord texcoord;
 	texcoord.x = clampf(x);
 	texcoord.y = clampf(y);
 	return texcoord;
 }
 
 /***********************************************************/
-TEXTURE texture(GLchar* name, TEXCOORD a, TEXCOORD b, TEXCOORD c, TEXCOORD d){
-	TEXTURE texture;
+v3dmc_texture texture(GLchar* name, v3dmc_texcoord a, v3dmc_texcoord b, v3dmc_texcoord c, v3dmc_texcoord d){
+	v3dmc_texture texture;
 	texture.name[0] = '\0';
 	if(name!=NULL){
 		strcpy(texture.name,name);
@@ -264,32 +325,34 @@ TEXTURE texture(GLchar* name, TEXCOORD a, TEXCOORD b, TEXCOORD c, TEXCOORD d){
 }
 
 /***********************************************************/
-void saveObject(OBJECT obj, GLchar *filename){
+void save_object(v3dmc_object obj, GLchar *filename){
 	FILE* file;
 	GLint i;
-	POINTLIST points;
-	LINELIST lines;
+	v3dmc_point_list points = obj.points;
+	v3dmc_line_list lines = obj.lines;
+	v3dmc_triangle_list triangles = obj.triangles;
+	v3dmc_quad_list quads = obj.quads;
 	file = fopen(filename,"w");
 	if(file!=NULL){
 		fwrite(&(obj.npoints),sizeof(int),1,file);
 		fwrite(&(obj.nlines),sizeof(int),1,file);
 		fwrite(&(obj.ntriangles),sizeof(int),1,file);
 		fwrite(&(obj.nquads),sizeof(int),1,file);
-		points = obj.points;
-		lines = obj.lines;
 		for(i=0;i<obj.npoints;i++){
-			fwrite(&(points->point),sizeof(POINT),1,file);
+			fwrite(&(points->point),sizeof(v3dmc_point),1,file);
 			points = points->next;
 		}
 		for(i=0;i<obj.nlines;i++){
-			fwrite(&(lines->line),sizeof(LINE),1,file);
+			fwrite(&(lines->line),sizeof(v3dmc_line),1,file);
 			lines = lines->next;
 		}
 		for(i=0;i<obj.ntriangles;i++){
-			fwrite((obj.triangles+i),sizeof(TRIANGLE),1,file);
+			fwrite(&(triangles->triangle),sizeof(v3dmc_triangle),1,file);
+			triangles = triangles->next;
 		}
 		for(i=0;i<obj.nquads;i++){
-			fwrite((obj.quads+i),sizeof(QUAD),1,file);
+			fwrite(&(quads->quad),sizeof(v3dmc_quad),1,file);
+			quads = quads->next;
 		}
 		fclose(file);
 	}
