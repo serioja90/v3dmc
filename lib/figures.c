@@ -357,3 +357,39 @@ void save_object(v3dmc_object obj, GLchar *filename){
 		fclose(file);
 	}
 }
+
+/***********************************************************/
+v3dmc_object load_object(GLchar *filename){
+	FILE *file;
+	GLint i,npoints,nlines,ntriangles,nquads;
+	v3dmc_object obj = object();
+	v3dmc_point p;
+	v3dmc_line l;
+	v3dmc_triangle t;
+	v3dmc_quad q;
+	file = fopen(filename,"r");
+	if(file!=NULL){
+		fread(&npoints,sizeof(int),1,file);
+		fread(&nlines,sizeof(int),1,file);
+		fread(&ntriangles,sizeof(int),1,file);
+		fread(&nquads,sizeof(int),1,file);
+		for(i=0;i<npoints;i++){
+			fread(&p,sizeof(v3dmc_point),1,file);
+			add_point(&obj,p);
+		}
+		for(i=0;i<nlines;i++){
+			fread(&l,sizeof(v3dmc_line),1,file);
+			add_line(&obj,l);
+		}
+		for(i=0;i<ntriangles;i++){
+			fread(&t,sizeof(v3dmc_triangle),1,file);
+			add_triangle(&obj,t);
+		}
+		for(i=0;i<nquads;i++){
+			fread(&q,sizeof(v3dmc_quad),1,file);
+			add_quad(&obj,q);
+		}
+		fclose(file);
+	}
+	return obj;
+}

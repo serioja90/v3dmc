@@ -436,3 +436,12 @@ v3dmc_texture texture(GLchar* name, v3dmc_texcoord a, v3dmc_texcoord b, v3dmc_te
  * @param filename the name of the file to whici to save the object
  */
 void save_object(v3dmc_object obj, GLchar *filename);
+
+/**
+ * @fn load_object(GLchar *filename)
+ * This function allows to create a new object by loading its information from an
+ * saved model file.
+ * @param filename the name of the file from which to get the object data
+ * @return an v3dmc_object that correspond to the object saved in that file
+ */
+v3dmc_object load_object(GLchar *filename);
