@@ -39,6 +39,9 @@ int main(int argc, char** argv){
 	if(element!=NULL){
 		v3dmc_quad q = element->quad;
 		printf("%f,%f,%f\n",q.a.x,q.a.y,q.a.z);
+		if(q.a.has_color){
+			printf("The point has color\n");
+		}
 	}
 	return 0;
 }

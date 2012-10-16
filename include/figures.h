@@ -50,6 +50,8 @@ typedef struct{
 	GLfloat y;
 	/** The z coordinate of the point */
 	GLfloat z;
+	/** A flag that indicates if the point has a color */
+	GLboolean has_color;
 	/** The point's color */
 	v3dmc_color color;
 }v3dmc_point;
@@ -277,14 +279,31 @@ v3dmc_color rgbai(GLint r, GLint g, GLint b, GLint a);
 v3dmc_color rgbaf(GLclampf r, GLclampf g, GLclampf b, GLclampf a);
 
 /**
- * @fn point(GLfloat x, GLfloat y, GLfloat z, v3dmc_color color)
+ * @fn create_point4p(GLfloat x, GLfloat y, GLfloat z, v3dmc_color color)
  * This function create a v3dmc_point object.
  * @param x a float that represents the x coordinate of the point
  * @param y a float that represents the y coordinate of the point
  * @param z a float that represents the z coordinate of the point
+ * @param color a v3dmc_color object that indicates the point color
  * @return a v3dmc_point object
  */
-v3dmc_point point(GLfloat x, GLfloat y, GLfloat z, v3dmc_color color);
+v3dmc_point create_point4p(GLfloat x, GLfloat y, GLfloat z, v3dmc_color color);
+
+v3dmc_point create_point3p(GLfloat x, GLfloat y, GLfloat z);
+
+v3dmc_point empty_point();
+
+void set_point_color(v3dmc_point* point, v3dmc_color color);
+
+void remove_point_color(v3dmc_point* point);
+
+void set_point_x(v3dmc_point* point, GLfloat value);
+
+void set_point_y(v3dmc_point* point, GLfloat value);
+
+void set_point_z(v3dmc_point* point, GLfloat value);
+
+void set_point_coords(v3dmc_point* point, GLfloat x, GLfloat y, GLfloat z);
 
 /**
  * @fn line(v3dmc_point a, v3dmc_point b)

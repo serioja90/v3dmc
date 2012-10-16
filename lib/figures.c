@@ -55,14 +55,76 @@ v3dmc_color rgbaf(GLclampf r, GLclampf g, GLclampf b, GLclampf a){
 }
 
 /***********************************************************/
-v3dmc_point point(GLfloat x, GLfloat y, GLfloat z, v3dmc_color color){
+v3dmc_point empty_point(){
 	v3dmc_point point;
-	point.x = x;
-	point.y = y;
-	point.z = z;
-	point.color = color;
+	point.x = 0.0f;
+	point.y = 0.0f;
+	point.z = 0.0f;
+	point.has_color = GL_FALSE;
+	point.color = rgbi(255,255,255);
 	return point;
 }
+
+/***********************************************************/
+void set_point_coords(v3dmc_point* point, GLfloat x, GLfloat y, GLfloat z){
+	if(point!=NULL){
+		point->x = x;
+		point->y = y;
+		point->z = z;
+	}
+}
+
+/***********************************************************/
+void set_point_x(v3dmc_point* point, GLfloat value){
+	if(point!=NULL){
+		point->x = value;
+	}
+}
+
+/***********************************************************/
+void set_point_y(v3dmc_point* point, GLfloat value){
+	if(point!=NULL){
+		point->y = value;
+	}
+}
+
+/***********************************************************/
+void set_point_z(v3dmc_point* point, GLfloat value){
+	if(point!=NULL){
+		point->z = value;
+	}
+}
+
+/***********************************************************/
+v3dmc_point create_point3p(GLfloat x, GLfloat y, GLfloat z){
+	v3dmc_point point = empty_point();
+	set_point_coords(&point,x,y,z);
+	return point;
+}
+
+/***********************************************************/
+void set_point_color(v3dmc_point* point, v3dmc_color color){
+	if(point!=NULL){
+		point->has_color = GL_TRUE;
+		point->color = color;
+	}
+}
+
+/***********************************************************/
+void remove_point_color(v3dmc_point* point){
+	if(point!=NULL){
+		point->has_color = GL_FALSE;
+		point->color = rgbi(255,255,255);
+	}
+}
+
+/***********************************************************/
+v3dmc_point create_point4p(GLfloat x, GLfloat y, GLfloat z, v3dmc_color color){
+	v3dmc_point point = create_point3p(x,y,z);
+	set_point_color(&point,color);
+	return point;
+}
+
 
 /***********************************************************/
 v3dmc_line line(v3dmc_point a, v3dmc_point b){
