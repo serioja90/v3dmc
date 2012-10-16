@@ -464,3 +464,5 @@ void save_object(v3dmc_object obj, GLchar *filename);
  * @return an v3dmc_object that correspond to the object saved in that file
  */
 v3dmc_object load_object(GLchar *filename);
+
+void read_point(FILE* file, v3dmc_point* point);

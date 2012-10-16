@@ -401,7 +401,13 @@ void save_object(v3dmc_object obj, GLchar *filename){
 		fwrite(&(obj.ntriangles),sizeof(int),1,file);
 		fwrite(&(obj.nquads),sizeof(int),1,file);
 		for(i=0;i<obj.npoints;i++){
-			fwrite(&(points->point),sizeof(v3dmc_point),1,file);
+			fwrite(&(points->point.x),sizeof(GLfloat),1,file);
+			fwrite(&(points->point.y),sizeof(GLfloat),1,file);
+			fwrite(&(points->point.z),sizeof(GLfloat),1,file);
+			fwrite(&(points->point.has_color),sizeof(GLboolean),1,file);
+			if(points->point.has_color){
+				fwrite(&(points->point.color),sizeof(v3dmc_color),1,file);
+			}
 			points = points->next;
 		}
 		for(i=0;i<obj.nlines;i++){
@@ -421,6 +427,19 @@ void save_object(v3dmc_object obj, GLchar *filename){
 }
 
 /***********************************************************/
+void read_point(FILE* file, v3dmc_point* point){
+	if(file!=NULL){
+		GLfloat coords[3];
+		fread(coords,sizeof(GLfloat),3,file);
+		set_point_coords(point,coords[0],coords[1],coords[2]);
+		fread(&(point->has_color),sizeof(GLboolean),1,file);
+		if(point->has_color){
+			fread(&(point->color),sizeof(v3dmc_color),1,file);
+		}
+	}
+}
+
+/***********************************************************/
 v3dmc_object load_object(GLchar *filename){
 	FILE *file;
 	GLint i,npoints,nlines,ntriangles,nquads;
@@ -436,7 +455,7 @@ v3dmc_object load_object(GLchar *filename){
 		fread(&ntriangles,sizeof(int),1,file);
 		fread(&nquads,sizeof(int),1,file);
 		for(i=0;i<npoints;i++){
-			fread(&p,sizeof(v3dmc_point),1,file);
+			read_point(file,&p);
 			add_point(&obj,p);
 		}
 		for(i=0;i<nlines;i++){
